@@ -50,7 +50,6 @@ static UVIBorderBlankRegister    m_BorderHBlank;
 // 0xcc002080 - 0xcc002100 even more unknown
 
 u32 TargetRefreshRate = 0;
-<<<<<<< HEAD
 int VIWidth = 640;
 int VIHeight = 480;
 bool VMode = false;
@@ -59,7 +58,6 @@ static u32 s_lineCount = 0;
 static u32 s_upperFieldBegin = 0;
 static u32 s_lowerFieldBegin = 0;
 static int fields = 1;
-=======
 
 static u32 s_clock_freqs[2] =
 {
@@ -78,7 +76,6 @@ static u32 s_even_field_first_hl; // index first halfline of the even field
 static u32 s_odd_field_first_hl;  // index first halfline of the odd field
 static u32 s_even_field_last_hl;  // index last halfline of the even field
 static u32 s_odd_field_last_hl;   // index last halfline of the odd field
->>>>>>> 4ea30db86090cb76eac75c35d3cef983fb338f19
 
 void DoState(PointerWrap &p)
 {
@@ -541,13 +538,7 @@ static void BeginField(FieldType field)
 		&m_VBlankTimingEven,
 	};
 
-<<<<<<< HEAD
-	DEBUG_LOG(VIDEOINTERFACE,
-			  "(VI->BeginField): Address: %.08X | WPL %u | STD %u | ACV %u | Field %s",
-			  xfbAddr, m_PictureConfiguration.WPL, m_PictureConfiguration.STD,
-			  m_VerticalTimingRegister.ACV, fieldTypeNames[field]);
-	
-=======
+
 	WARN_LOG(VIDEOINTERFACE,
 				"(VI->BeginField): Address: %.08X | WPL %u | STD %u | EQ %u | PRB %u | ACV %u | PSB %u | Field %s",
 				xfbAddr, m_PictureConfiguration.WPL, m_PictureConfiguration.STD, m_VerticalTimingRegister.EQU,
@@ -557,7 +548,6 @@ static void BeginField(FieldType field)
 			"HorizScaling: %04x | fbwidth %d | %u | %u",
 			m_HorizontalScaling.Hex, m_FBWidth.Hex, GetTicksPerEvenField(), GetTicksPerOddField());
 
->>>>>>> 4ea30db86090cb76eac75c35d3cef983fb338f19
 	if (xfbAddr)
 		g_video_backend->Video_BeginField(xfbAddr, fbWidth, fbStride, fbHeight);
 	
