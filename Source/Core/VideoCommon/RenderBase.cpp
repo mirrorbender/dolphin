@@ -28,7 +28,7 @@
 #include "Core/Movie.h"
 #include "Core/FifoPlayer/FifoRecorder.h"
 
-#include "Core/HW/VideoInterface.h" //For Aspect Ratio Correction/Scaling Emulation
+#include "Core/HW/VideoInterface.h"
 
 #include "VideoCommon/AVIDump.h"
 #include "VideoCommon/BPMemory.h"
@@ -487,46 +487,20 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 
 	// Check for force-settings and override.
 	if (g_ActiveConfig.iAspectRatio == ASPECT_FORCE_16_9)
-		use16_9 = true;
+		g_aspect_wide = use16_9 = true;
 	else if (g_ActiveConfig.iAspectRatio == ASPECT_ANALOG_WIDE)
-		use16_9 = true;
+		g_aspect_wide = use16_9 = true;
 	else if (g_ActiveConfig.iAspectRatio == ASPECT_FORCE_4_3)
-		use16_9 = false;
+		g_aspect_wide = use16_9 = false;
 	else if (g_ActiveConfig.iAspectRatio == ASPECT_ANALOG)
-		use16_9 = false;
+		g_aspect_wide = use16_9 = false;
 	if (g_ActiveConfig.iAspectRatio != ASPECT_STRETCH)
 	{
 		// The rendering window aspect ratio as a proportion of the 4:3 or 16:9 ratio
 		float Ratio = (WinWidth / WinHeight) / (!use16_9 ? (4.0f / 3.0f) : (16.0f / 9.0f));
-		if (g_ActiveConfig.iAspectRatio == ASPECT_ANALOG)
+		if (g_ActiveConfig.iAspectRatio == ASPECT_ANALOG || g_ActiveConfig.iAspectRatio == ASPECT_ANALOG_WIDE)
 		{
-			if(VideoInterface::VMode)
-			{
-				int width = VideoInterface::VIWidth;
-				int height = VideoInterface::VIHeight;
-				Ratio = (WinWidth / WinHeight) / ((768.0f / 702.0f) * ((float)width / (float)height));
-			}
-			else
-			{
-				int width = VideoInterface::VIWidth;
-				int height = VideoInterface::VIHeight;
-				Ratio = (WinWidth / WinHeight) / ((648.0f / 710.85f) * ((float)width / (float)height));
-			}
-		}
-		else if (g_ActiveConfig.iAspectRatio == ASPECT_ANALOG_WIDE)
-		{
-			if(VideoInterface::VMode)
-			{
-				int width = VideoInterface::VIWidth;
-				int height = VideoInterface::VIHeight;
-				Ratio = (WinWidth / WinHeight) / ((1025.0f / 702.0f) * ((float)width / (float)height));
-			}
-			else
-			{
-				int width = VideoInterface::VIWidth;
-				int height = VideoInterface::VIHeight;
-				Ratio = (WinWidth / WinHeight) / ((853.33f / 710.85f) * ((float)width / (float)height));
-			}
+			Ratio = (WinWidth / WinHeight) / VideoInterface::GetAspectRatio();
 		}
 		
 		// Check if height or width is the limiting factor. If ratio > 1 the picture is too wide and have to limit the width.

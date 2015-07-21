@@ -328,9 +328,6 @@ union UVIHorizontalStepping
 
 	// urgh, ugly externs.
 	extern u32 TargetRefreshRate;
-	extern int VIWidth;
-	extern int VIHeight;
-	extern bool VMode;
 
 	// For BS2 HLE
 	void Preset(bool _bNTSC);
@@ -356,4 +353,8 @@ union UVIHorizontalStepping
 
 	unsigned int GetTicksPerLine();
 	unsigned int GetTicksPerFrame();
+	
+	//For VI Scaling and Aspect Ratio Correction
+	float GetAspectRatio();
+	bool GetVideoMode();
 }

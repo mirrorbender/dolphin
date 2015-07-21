@@ -18,6 +18,7 @@
 #include "Core/PowerPC/PowerPC.h"
 
 #include "VideoCommon/VideoBackendBase.h"
+#include "VideoCommon/RenderBase.h"
 
 namespace VideoInterface
 {
@@ -52,9 +53,7 @@ static UVIBorderBlankRegister    m_BorderHBlank;
 // 0xcc002080 - 0xcc002100 even more unknown
 
 u32 TargetRefreshRate = 0;
-int VIWidth = 640;
-int VIHeight = 480;
-bool VMode = false;
+
 static u32 TicksPerFrame = 0;
 static u32 s_lineCount = 0;
 static u32 s_upperFieldBegin = 0;
@@ -438,6 +437,39 @@ u32 GetXFBAddressBottom()
 		return m_XFBInfoBottom.FBB;
 }
 
+float GetAspectRatio()
+{
+	int height = (2 * m_VerticalTimingRegister.ACV);
+	int width = ((2 * m_HTiming0.HLW) - (m_HTiming0.HLW - m_HTiming1.HBS640)
+		- m_HTiming1.HBE640);
+	float pixelAR;
+	if (m_DisplayControlRegister.FMT == 1)
+	{
+		if (g_aspect_wide)
+		{
+			pixelAR = 1024.0f / 702.0f;
+		}
+		else
+		{
+			pixelAR = 768.0f / 702.0f;
+		}
+	}
+	else
+	{
+		if (g_aspect_wide)
+		{
+			pixelAR = 864.0f / 710.85f;
+		}
+		else
+		{
+			pixelAR = 648.0f / 710.85f;
+		}
+	}
+	
+	return ((float)width / (float)height) * pixelAR;
+}
+
+
 void UpdateParameters()
 {
 	fields = m_DisplayControlRegister.NIN ? 2 : 1;
@@ -544,14 +576,7 @@ static void BeginField(FieldType field)
 	if (xfbAddr)
 		g_video_backend->Video_BeginField(xfbAddr, fbWidth, fbStride, fbHeight);
 	
-	//printf("%u\n", m_VerticalTimingRegister.ACV);
-	VIWidth = (2 * m_HTiming0.HLW) - (m_HTiming0.HLW - m_HTiming1.HBS640)
-		- m_HTiming1.HBE640;
-	VIHeight = 2 * m_VerticalTimingRegister.ACV;
-	if (m_DisplayControlRegister.FMT == 1)
-		VMode = true;	//PAL50
-	else
-		VMode = false;	//NTSC or PAL60
+	
 }
 
 static void EndField()
