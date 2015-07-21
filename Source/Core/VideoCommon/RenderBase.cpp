@@ -371,9 +371,11 @@ void Renderer::DrawDebugText()
 		case ASPECT_STRETCH:
 			ar_text = "Stretch";
 			break;
-		case ASPECT_NTSC:
-			ar_text = "NTSC";
+		case ASPECT_ANALOG:
+			ar_text = "Analog TV";
 			break;
+		case ASPECT_ANALOG_WIDE:
+			ar_text = "Analog TV (Wide)";
 		}
 
 		const char* const efbcopy_text = g_ActiveConfig.bSkipEFBCopyToRam ? "to Texture" : "to RAM";
@@ -453,7 +455,7 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 		case ASPECT_STRETCH:
 			target_aspect = WinWidth / WinHeight;
 			break;
-		case ASPECT_NTSC:
+		case ASPECT_ANALOG:
 			target_aspect = (648.0f / 710.85f) * (4.0f / 3.0f);
 			break;
 		default:
@@ -486,40 +488,47 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 	// Check for force-settings and override.
 	if (g_ActiveConfig.iAspectRatio == ASPECT_FORCE_16_9)
 		use16_9 = true;
-	else if (g_ActiveConfig.iAspectRatio == ASPECT_NTSC_WIDE)
+	else if (g_ActiveConfig.iAspectRatio == ASPECT_ANALOG_WIDE)
 		use16_9 = true;
 	else if (g_ActiveConfig.iAspectRatio == ASPECT_FORCE_4_3)
 		use16_9 = false;
-	else if (g_ActiveConfig.iAspectRatio == ASPECT_NTSC)
+	else if (g_ActiveConfig.iAspectRatio == ASPECT_ANALOG)
 		use16_9 = false;
 	if (g_ActiveConfig.iAspectRatio != ASPECT_STRETCH)
 	{
 		// The rendering window aspect ratio as a proportion of the 4:3 or 16:9 ratio
 		float Ratio = (WinWidth / WinHeight) / (!use16_9 ? (4.0f / 3.0f) : (16.0f / 9.0f));
-		if (g_ActiveConfig.iAspectRatio == ASPECT_NTSC)
+		if (g_ActiveConfig.iAspectRatio == ASPECT_ANALOG)
 		{
-			int width = VideoInterface::VIWidth;
-			int height = VideoInterface::VIHeight;
-			Ratio = (WinWidth / WinHeight) / ((648.0f / 710.85f) * ((float)width / (float)height));
+			if(VideoInterface::VMode)
+			{
+				int width = VideoInterface::VIWidth;
+				int height = VideoInterface::VIHeight;
+				Ratio = (WinWidth / WinHeight) / ((768.0f / 702.0f) * ((float)width / (float)height));
+			}
+			else
+			{
+				int width = VideoInterface::VIWidth;
+				int height = VideoInterface::VIHeight;
+				Ratio = (WinWidth / WinHeight) / ((648.0f / 710.85f) * ((float)width / (float)height));
+			}
 		}
-		else if (g_ActiveConfig.iAspectRatio == ASPECT_NTSC_WIDE)
+		else if (g_ActiveConfig.iAspectRatio == ASPECT_ANALOG_WIDE)
 		{
-			int width = VideoInterface::VIWidth;
-			int height = VideoInterface::VIHeight;
-			Ratio = (WinWidth / WinHeight) / ((853.33f / 710.85f) * ((float)width / (float)height));
+			if(VideoInterface::VMode)
+			{
+				int width = VideoInterface::VIWidth;
+				int height = VideoInterface::VIHeight;
+				Ratio = (WinWidth / WinHeight) / ((1025.0f / 702.0f) * ((float)width / (float)height));
+			}
+			else
+			{
+				int width = VideoInterface::VIWidth;
+				int height = VideoInterface::VIHeight;
+				Ratio = (WinWidth / WinHeight) / ((853.33f / 710.85f) * ((float)width / (float)height));
+			}
 		}
-		else if (g_ActiveConfig.iAspectRatio == ASPECT_PAL)
-		{
-			int width = VideoInterface::VIWidth;
-			int height = VideoInterface::VIHeight;
-			Ratio = (WinWidth / WinHeight) / ((768.0f / 702.0f) * ((float)width / (float)height));
-		}
-		else if (g_ActiveConfig.iAspectRatio == ASPECT_PAL_WIDE)
-		{
-			int width = VideoInterface::VIWidth;
-			int height = VideoInterface::VIHeight;
-			Ratio = (WinWidth / WinHeight) / ((1025.0f / 702.0f) * ((float)width / (float)height));
-		}
+		
 		// Check if height or width is the limiting factor. If ratio > 1 the picture is too wide and have to limit the width.
 		if (Ratio > 1.0f)
 		{
@@ -540,8 +549,7 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 	// Crop the picture from 4:3 to 5:4 or from 16:9 to 16:10.
 	// Output: FloatGLWidth, FloatGLHeight, FloatXOffset, FloatYOffset
 	// ------------------
-	if (g_ActiveConfig.iAspectRatio != ASPECT_STRETCH && g_ActiveConfig.iAspectRatio 
-		!= ASPECT_NTSC && g_ActiveConfig.bCrop)
+	if (g_ActiveConfig.iAspectRatio != ASPECT_STRETCH && g_ActiveConfig.bCrop)
 	{
 		float Ratio = !use16_9 ? ((4.0f / 3.0f) / (5.0f / 4.0f)) : (((16.0f / 9.0f) / (16.0f / 10.0f)));
 		// The width and height we will add (calculate this before FloatGLWidth and FloatGLHeight is adjusted)

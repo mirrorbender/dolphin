@@ -330,6 +330,7 @@ union UVIHorizontalStepping
 	extern u32 TargetRefreshRate;
 	extern int VIWidth;
 	extern int VIHeight;
+	extern bool VMode;
 
 	// For BS2 HLE
 	void Preset(bool _bNTSC);

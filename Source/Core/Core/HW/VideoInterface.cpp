@@ -54,7 +54,7 @@ static UVIBorderBlankRegister    m_BorderHBlank;
 u32 TargetRefreshRate = 0;
 int VIWidth = 640;
 int VIHeight = 480;
-
+bool VMode = false;
 static u32 TicksPerFrame = 0;
 static u32 s_lineCount = 0;
 static u32 s_upperFieldBegin = 0;
@@ -548,6 +548,10 @@ static void BeginField(FieldType field)
 	VIWidth = (2 * m_HTiming0.HLW) - (m_HTiming0.HLW - m_HTiming1.HBS640)
 		- m_HTiming1.HBE640;
 	VIHeight = 2 * m_VerticalTimingRegister.ACV;
+	if (m_DisplayControlRegister.FMT == 1)
+		VMode = true;	//PAL50
+	else
+		VMode = false;	//NTSC or PAL60
 }
 
 static void EndField()
