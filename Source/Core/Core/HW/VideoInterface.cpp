@@ -52,8 +52,8 @@ static UVIBorderBlankRegister    m_BorderHBlank;
 // 0xcc002080 - 0xcc002100 even more unknown
 
 u32 TargetRefreshRate = 0;
-int VIWidth = 0;
-int VIHeight = 0;
+int VIWidth = 640;
+int VIHeight = 480;
 
 static u32 TicksPerFrame = 0;
 static u32 s_lineCount = 0;
@@ -440,11 +440,6 @@ u32 GetXFBAddressBottom()
 
 void UpdateParameters()
 {
-	
-	VIWidth = (2 * m_HTiming0.HLW) - (m_HTiming0.HLW - m_HTiming1.HBS640)
-		- m_HTiming1.HBE640;
-	VIHeight = 2 * m_VerticalTimingRegister.ACV;
-	
 	fields = m_DisplayControlRegister.NIN ? 2 : 1;
 
 	switch (m_DisplayControlRegister.FMT)
@@ -545,9 +540,14 @@ static void BeginField(FieldType field)
 			  "(VI->BeginField): Address: %.08X | WPL %u | STD %u | ACV %u | Field %s",
 			  xfbAddr, m_PictureConfiguration.WPL, m_PictureConfiguration.STD,
 			  m_VerticalTimingRegister.ACV, fieldTypeNames[field]);
-
+	
 	if (xfbAddr)
 		g_video_backend->Video_BeginField(xfbAddr, fbWidth, fbStride, fbHeight);
+	
+	//printf("%u\n", m_VerticalTimingRegister.ACV);
+	VIWidth = (2 * m_HTiming0.HLW) - (m_HTiming0.HLW - m_HTiming1.HBS640)
+		- m_HTiming1.HBE640;
+	VIHeight = 2 * m_VerticalTimingRegister.ACV;
 }
 
 static void EndField()
