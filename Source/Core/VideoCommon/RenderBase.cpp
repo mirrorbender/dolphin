@@ -488,16 +488,19 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 		use16_9 = true;
 	else if (g_ActiveConfig.iAspectRatio == ASPECT_FORCE_4_3)
 		use16_9 = false;
-
+	else if (g_ActiveConfig.iAspectRatio == ASPECT_NTSC)
+		use16_9 = false;
 	if (g_ActiveConfig.iAspectRatio != ASPECT_STRETCH)
 	{
 		// The rendering window aspect ratio as a proportion of the 4:3 or 16:9 ratio
 		float Ratio = (WinWidth / WinHeight) / (!use16_9 ? (4.0f / 3.0f) : (16.0f / 9.0f));
 		if (g_ActiveConfig.iAspectRatio == ASPECT_NTSC)
 		{
-			u16 scale = VideoInterface::VIHScale;
-			//printf("%X\n", scale);
-			Ratio = (WinWidth / WinHeight) / ((648.0f / 710.85f) * (4.0f / 3.0f));
+			int width = VideoInterface::VIWidth;
+			int height = VideoInterface::VIHeight;
+			Ratio = (WinWidth / WinHeight) / ((648.0f / 710.85f) * ((float)width / (float)height));
+			//printf("%d\n", width);
+			//printf("%d\n", height);
 		}
 		// Check if height or width is the limiting factor. If ratio > 1 the picture is too wide and have to limit the width.
 		if (Ratio > 1.0f)

@@ -328,7 +328,8 @@ union UVIHorizontalStepping
 
 	// urgh, ugly externs.
 	extern u32 TargetRefreshRate;
-	extern u16 VIHScale;
+	extern int VIWidth;
+	extern int VIHeight;
 
 	// For BS2 HLE
 	void Preset(bool _bNTSC);
