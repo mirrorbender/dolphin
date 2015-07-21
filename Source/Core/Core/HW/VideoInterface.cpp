@@ -52,6 +52,7 @@ static UVIBorderBlankRegister    m_BorderHBlank;
 // 0xcc002080 - 0xcc002100 even more unknown
 
 u32 TargetRefreshRate = 0;
+u16 VIHScale = 0;
 
 static u32 TicksPerFrame = 0;
 static u32 s_lineCount = 0;
@@ -438,6 +439,8 @@ u32 GetXFBAddressBottom()
 
 void UpdateParameters()
 {
+	VIHScale = m_HorizontalScaling.Hex;
+	
 	fields = m_DisplayControlRegister.NIN ? 2 : 1;
 
 	switch (m_DisplayControlRegister.FMT)

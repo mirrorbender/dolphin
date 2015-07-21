@@ -28,6 +28,8 @@
 #include "Core/Movie.h"
 #include "Core/FifoPlayer/FifoRecorder.h"
 
+#include "Core/HW/VideoInterface.h" //For Aspect Ratio Correction/Scaling Emulation
+
 #include "VideoCommon/AVIDump.h"
 #include "VideoCommon/BPMemory.h"
 #include "VideoCommon/CommandProcessor.h"
@@ -43,6 +45,7 @@
 #include "VideoCommon/TextureCacheBase.h"
 #include "VideoCommon/VideoConfig.h"
 #include "VideoCommon/XFMemory.h"
+
 
 // TODO: Move these out of here.
 int frameCount;
@@ -368,6 +371,9 @@ void Renderer::DrawDebugText()
 		case ASPECT_STRETCH:
 			ar_text = "Stretch";
 			break;
+		case ASPECT_NTSC:
+			ar_text = "NTSC";
+			break;
 		}
 
 		const char* const efbcopy_text = g_ActiveConfig.bSkipEFBCopyToRam ? "to Texture" : "to RAM";
@@ -447,6 +453,9 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 		case ASPECT_STRETCH:
 			target_aspect = WinWidth / WinHeight;
 			break;
+		case ASPECT_NTSC:
+			target_aspect = (648.0f / 710.85f) * (4.0f / 3.0f);
+			break;
 		default:
 			// ASPECT_AUTO == no hacking
 			target_aspect = source_aspect;
@@ -484,6 +493,12 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 	{
 		// The rendering window aspect ratio as a proportion of the 4:3 or 16:9 ratio
 		float Ratio = (WinWidth / WinHeight) / (!use16_9 ? (4.0f / 3.0f) : (16.0f / 9.0f));
+		if (g_ActiveConfig.iAspectRatio == ASPECT_NTSC)
+		{
+			u16 scale = VideoInterface::VIHScale;
+			//printf("%X\n", scale);
+			Ratio = (WinWidth / WinHeight) / ((648.0f / 710.85f) * (4.0f / 3.0f));
+		}
 		// Check if height or width is the limiting factor. If ratio > 1 the picture is too wide and have to limit the width.
 		if (Ratio > 1.0f)
 		{
@@ -504,7 +519,8 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 	// Crop the picture from 4:3 to 5:4 or from 16:9 to 16:10.
 	// Output: FloatGLWidth, FloatGLHeight, FloatXOffset, FloatYOffset
 	// ------------------
-	if (g_ActiveConfig.iAspectRatio != ASPECT_STRETCH && g_ActiveConfig.bCrop)
+	if (g_ActiveConfig.iAspectRatio != ASPECT_STRETCH && g_ActiveConfig.iAspectRatio 
+		!= ASPECT_NTSC && g_ActiveConfig.bCrop)
 	{
 		float Ratio = !use16_9 ? ((4.0f / 3.0f) / (5.0f / 4.0f)) : (((16.0f / 9.0f) / (16.0f / 10.0f)));
 		// The width and height we will add (calculate this before FloatGLWidth and FloatGLHeight is adjusted)
