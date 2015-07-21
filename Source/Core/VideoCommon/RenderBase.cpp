@@ -486,6 +486,8 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 	// Check for force-settings and override.
 	if (g_ActiveConfig.iAspectRatio == ASPECT_FORCE_16_9)
 		use16_9 = true;
+	else if (g_ActiveConfig.iAspectRatio == ASPECT_NTSC_WIDE)
+		use16_9 = true;
 	else if (g_ActiveConfig.iAspectRatio == ASPECT_FORCE_4_3)
 		use16_9 = false;
 	else if (g_ActiveConfig.iAspectRatio == ASPECT_NTSC)
@@ -499,8 +501,24 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 			int width = VideoInterface::VIWidth;
 			int height = VideoInterface::VIHeight;
 			Ratio = (WinWidth / WinHeight) / ((648.0f / 710.85f) * ((float)width / (float)height));
-			//printf("%d\n", width);
-			//printf("%d\n", height);
+		}
+		else if (g_ActiveConfig.iAspectRatio == ASPECT_NTSC_WIDE)
+		{
+			int width = VideoInterface::VIWidth;
+			int height = VideoInterface::VIHeight;
+			Ratio = (WinWidth / WinHeight) / ((853.33f / 710.85f) * ((float)width / (float)height));
+		}
+		else if (g_ActiveConfig.iAspectRatio == ASPECT_PAL)
+		{
+			int width = VideoInterface::VIWidth;
+			int height = VideoInterface::VIHeight;
+			Ratio = (WinWidth / WinHeight) / ((768.0f / 702.0f) * ((float)width / (float)height));
+		}
+		else if (g_ActiveConfig.iAspectRatio == ASPECT_PAL_WIDE)
+		{
+			int width = VideoInterface::VIWidth;
+			int height = VideoInterface::VIHeight;
+			Ratio = (WinWidth / WinHeight) / ((1025.0f / 702.0f) * ((float)width / (float)height));
 		}
 		// Check if height or width is the limiting factor. If ratio > 1 the picture is too wide and have to limit the width.
 		if (Ratio > 1.0f)

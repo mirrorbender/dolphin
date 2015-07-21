@@ -30,6 +30,9 @@ enum AspectMode
 	ASPECT_FORCE_4_3  = 2,
 	ASPECT_STRETCH    = 3,
 	ASPECT_NTSC		  = 4,
+	ASPECT_NTSC_WIDE  = 5,
+	ASPECT_PAL		  = 6,
+	ASPECT_PAL_WIDE   = 7,
 };
 
 enum EFBScale
