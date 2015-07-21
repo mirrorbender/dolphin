@@ -18,7 +18,6 @@
 #include "Core/PowerPC/PowerPC.h"
 
 #include "VideoCommon/VideoBackendBase.h"
-#include "VideoCommon/RenderBase.h"
 
 namespace VideoInterface
 {
@@ -437,7 +436,7 @@ u32 GetXFBAddressBottom()
 		return m_XFBInfoBottom.FBB;
 }
 
-float GetAspectRatio()
+float GetAspectRatio(bool wide)
 {
 	int height = (2 * m_VerticalTimingRegister.ACV);
 	int width = ((2 * m_HTiming0.HLW) - (m_HTiming0.HLW - m_HTiming1.HBS640)
@@ -445,7 +444,7 @@ float GetAspectRatio()
 	float pixelAR;
 	if (m_DisplayControlRegister.FMT == 1)
 	{
-		if (g_aspect_wide)
+		if (wide)
 		{
 			pixelAR = 1024.0f / 702.0f;
 		}
@@ -456,7 +455,7 @@ float GetAspectRatio()
 	}
 	else
 	{
-		if (g_aspect_wide)
+		if (wide)
 		{
 			pixelAR = 864.0f / 710.85f;
 		}

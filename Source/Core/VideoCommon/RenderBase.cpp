@@ -441,7 +441,7 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 	// Don't know if there is a better place for this code so there isn't a 1 frame delay
 	if (g_ActiveConfig.bWidescreenHack)
 	{
-		float source_aspect = use16_9 ? (16.0f / 9.0f) : (4.0f / 3.0f);
+		float source_aspect = VideoInterface::GetAspectRatio(use16_9);
 		float target_aspect;
 
 		switch (g_ActiveConfig.iAspectRatio)
@@ -456,7 +456,10 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 			target_aspect = WinWidth / WinHeight;
 			break;
 		case ASPECT_ANALOG:
-			target_aspect = (648.0f / 710.85f) * (4.0f / 3.0f);
+			target_aspect = VideoInterface::GetAspectRatio(false);
+			break;
+		case ASPECT_ANALOG_WIDE:
+			target_aspect = VideoInterface::GetAspectRatio(true);
 			break;
 		default:
 			// ASPECT_AUTO == no hacking
@@ -487,20 +490,20 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 
 	// Check for force-settings and override.
 	if (g_ActiveConfig.iAspectRatio == ASPECT_FORCE_16_9)
-		g_aspect_wide = use16_9 = true;
+		use16_9 = true;
 	else if (g_ActiveConfig.iAspectRatio == ASPECT_ANALOG_WIDE)
-		g_aspect_wide = use16_9 = true;
+		use16_9 = true;
 	else if (g_ActiveConfig.iAspectRatio == ASPECT_FORCE_4_3)
-		g_aspect_wide = use16_9 = false;
+		use16_9 = false;
 	else if (g_ActiveConfig.iAspectRatio == ASPECT_ANALOG)
-		g_aspect_wide = use16_9 = false;
+		use16_9 = false;
 	if (g_ActiveConfig.iAspectRatio != ASPECT_STRETCH)
 	{
 		// The rendering window aspect ratio as a proportion of the 4:3 or 16:9 ratio
 		float Ratio = (WinWidth / WinHeight) / (!use16_9 ? (4.0f / 3.0f) : (16.0f / 9.0f));
 		if (g_ActiveConfig.iAspectRatio == ASPECT_ANALOG || g_ActiveConfig.iAspectRatio == ASPECT_ANALOG_WIDE)
 		{
-			Ratio = (WinWidth / WinHeight) / VideoInterface::GetAspectRatio();
+			Ratio = (WinWidth / WinHeight) / VideoInterface::GetAspectRatio(use16_9);
 		}
 		
 		// Check if height or width is the limiting factor. If ratio > 1 the picture is too wide and have to limit the width.
