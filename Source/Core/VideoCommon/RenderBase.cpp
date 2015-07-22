@@ -510,12 +510,27 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 	}
 
 	// -----------------------------------------------------------------------
-	// Crop the picture from 4:3 to 5:4 or from 16:9 to 16:10.
+	// Crop the picture from Analog to 4:3 or from Analog (Wide) to 16:9.
 	// Output: FloatGLWidth, FloatGLHeight, FloatXOffset, FloatYOffset
 	// ------------------
 	if (g_ActiveConfig.iAspectRatio != ASPECT_STRETCH && g_ActiveConfig.bCrop)
 	{
-		float Ratio = !use16_9 ? ((4.0f / 3.0f) / (5.0f / 4.0f)) : (((16.0f / 9.0f) / (16.0f / 10.0f)));
+		switch (g_ActiveConfig.iAspectRatio)
+		{
+		case ASPECT_ANALOG_WIDE:
+			Ratio = (16.0f / 9.0f) / VideoInterface::GetAspectRatio(true);
+			break;
+		case ASPECT_ANALOG:
+			Ratio = (4.0f / 3.0f) / VideoInterface::GetAspectRatio(false);
+			break;
+		default:
+			Ratio = (!g_aspect_wide ? (4.0f / 3.0f) : (16.0f / 9.0f)) / VideoInterface::GetAspectRatio(g_aspect_wide);
+			break;
+		}
+		if (Ratio <= 1.0f)
+		{
+			Ratio = 1.0f/Ratio;
+		}
 		// The width and height we will add (calculate this before FloatGLWidth and FloatGLHeight is adjusted)
 		float IncreasedWidth = (Ratio - 1.0f) * FloatGLWidth;
 		float IncreasedHeight = (Ratio - 1.0f) * FloatGLHeight;
