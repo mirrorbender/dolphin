@@ -356,5 +356,4 @@ union UVIHorizontalStepping
 	
 	//For VI Scaling and Aspect Ratio Correction
 	float GetAspectRatio(bool);
-	bool GetVideoMode();
 }

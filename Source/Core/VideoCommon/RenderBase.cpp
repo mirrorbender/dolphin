@@ -489,14 +489,24 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 	}
 
 	// Check for force-settings and override.
-	if (g_ActiveConfig.iAspectRatio == ASPECT_FORCE_16_9)
+	switch (g_ActiveConfig.iAspectRatio)
+		{
+	case ASPECT_FORCE_16_9:
 		use16_9 = true;
-	else if (g_ActiveConfig.iAspectRatio == ASPECT_ANALOG_WIDE)
+		break;
+	case ASPECT_ANALOG_WIDE:
 		use16_9 = true;
-	else if (g_ActiveConfig.iAspectRatio == ASPECT_FORCE_4_3)
+		break;
+	case ASPECT_FORCE_4_3:
 		use16_9 = false;
-	else if (g_ActiveConfig.iAspectRatio == ASPECT_ANALOG)
+		break;
+	case ASPECT_ANALOG:
 		use16_9 = false;
+		break;
+	default:
+		use16_9 = g_aspect_wide;
+		break;
+	}
 	if (g_ActiveConfig.iAspectRatio != ASPECT_STRETCH)
 	{
 		// The rendering window aspect ratio as a proportion of the 4:3 or 16:9 ratio
