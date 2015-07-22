@@ -26,11 +26,9 @@
 enum AspectMode
 {
 	ASPECT_AUTO        = 0,
-	ASPECT_FORCE_16_9  = 1,
-	ASPECT_FORCE_4_3   = 2,
+	ASPECT_ANALOG_WIDE  = 1,
+	ASPECT_ANALOG   = 2,
 	ASPECT_STRETCH     = 3,
-	ASPECT_ANALOG      = 4,
-	ASPECT_ANALOG_WIDE = 5,
 };
 
 enum EFBScale

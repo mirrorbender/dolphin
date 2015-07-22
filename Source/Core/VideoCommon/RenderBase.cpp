@@ -362,12 +362,6 @@ void Renderer::DrawDebugText()
 		case ASPECT_AUTO:
 			ar_text = "Auto";
 			break;
-		case ASPECT_FORCE_16_9:
-			ar_text = "16:9";
-			break;
-		case ASPECT_FORCE_4_3:
-			ar_text = "4:3";
-			break;
 		case ASPECT_STRETCH:
 			ar_text = "Stretch";
 			break;
@@ -441,17 +435,11 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 	// Don't know if there is a better place for this code so there isn't a 1 frame delay
 	if (g_ActiveConfig.bWidescreenHack)
 	{
-		float source_aspect = VideoInterface::GetAspectRatio(use16_9);
+		float source_aspect = VideoInterface::GetAspectRatio(g_aspect_wide);
 		float target_aspect;
 
 		switch (g_ActiveConfig.iAspectRatio)
 		{
-		case ASPECT_FORCE_16_9:
-			target_aspect = 16.0f / 9.0f;
-			break;
-		case ASPECT_FORCE_4_3:
-			target_aspect = 4.0f / 3.0f;
-			break;
 		case ASPECT_STRETCH:
 			target_aspect = WinWidth / WinHeight;
 			break;
@@ -462,7 +450,7 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 			target_aspect = VideoInterface::GetAspectRatio(true);
 			break;
 		default:
-			// ASPECT_AUTO == no hacking
+			// ASPECT_AUTO
 			target_aspect = source_aspect;
 			break;
 		}
@@ -489,34 +477,23 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 	}
 
 	// Check for force-settings and override.
+	
+	// The rendering window aspect ratio as a proportion of the 4:3 or 16:9 ratio
+	float Ratio;
 	switch (g_ActiveConfig.iAspectRatio)
 		{
-	case ASPECT_FORCE_16_9:
-		use16_9 = true;
-		break;
 	case ASPECT_ANALOG_WIDE:
-		use16_9 = true;
-		break;
-	case ASPECT_FORCE_4_3:
-		use16_9 = false;
+		Ratio = (WinWidth / WinHeight) / VideoInterface::GetAspectRatio(true);
 		break;
 	case ASPECT_ANALOG:
-		use16_9 = false;
+		Ratio = (WinWidth / WinHeight) / VideoInterface::GetAspectRatio(false);
 		break;
 	default:
-		use16_9 = g_aspect_wide;
+		Ratio = (WinWidth / WinHeight) / VideoInterface::GetAspectRatio(g_aspect_wide);
 		break;
 	}
 	if (g_ActiveConfig.iAspectRatio != ASPECT_STRETCH)
 	{
-		// The rendering window aspect ratio as a proportion of the 4:3 or 16:9 ratio
-		float Ratio = (WinWidth / WinHeight) / (!use16_9 ? (4.0f / 3.0f) : (16.0f / 9.0f));
-		if (g_ActiveConfig.iAspectRatio == ASPECT_ANALOG || g_ActiveConfig.iAspectRatio == ASPECT_ANALOG_WIDE)
-		{
-			Ratio = (WinWidth / WinHeight) / VideoInterface::GetAspectRatio(use16_9);
-		}
-		
-		// Check if height or width is the limiting factor. If ratio > 1 the picture is too wide and have to limit the width.
 		if (Ratio > 1.0f)
 		{
 			// Scale down and center in the X direction.
