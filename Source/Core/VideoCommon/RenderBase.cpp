@@ -426,10 +426,6 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 	const float WinWidth = FloatGLWidth;
 	const float WinHeight = FloatGLHeight;
 
-	// Handle aspect ratio.
-	// Default to auto.
-	bool use16_9 = g_aspect_wide;
-
 	// Update aspect ratio hack values
 	// Won't take effect until next frame
 	// Don't know if there is a better place for this code so there isn't a 1 frame delay
