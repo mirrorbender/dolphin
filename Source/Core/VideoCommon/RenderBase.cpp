@@ -473,7 +473,7 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 	}
 
 	// Check for force-settings and override.
-	
+
 	// The rendering window aspect ratio as a proportion of the 4:3 or 16:9 ratio
 	float Ratio;
 	switch (g_ActiveConfig.iAspectRatio)
@@ -525,7 +525,7 @@ void Renderer::UpdateDrawRectangle(int backbuffer_width, int backbuffer_height)
 		}
 		if (Ratio <= 1.0f)
 		{
-			Ratio = 1.0f/Ratio;
+			Ratio = 1.0f / Ratio;
 		}
 		// The width and height we will add (calculate this before FloatGLWidth and FloatGLHeight is adjusted)
 		float IncreasedWidth = (Ratio - 1.0f) * FloatGLWidth;

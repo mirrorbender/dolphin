@@ -136,7 +136,7 @@ public:
 	virtual int GetMaxTextureSize() = 0;
 
 	static Common::Event s_screenshotCompleted;
-	
+
 
 protected:
 
