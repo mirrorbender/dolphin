@@ -438,7 +438,8 @@ u32 GetXFBAddressBottom()
 
 float GetAspectRatio(bool wide)
 {
-	int height = (2 * m_VerticalTimingRegister.ACV);
+	u32 multiplier = static_cast<u32>(m_PictureConfiguration.STD / m_PictureConfiguration.WPL);
+	int height = (multiplier * m_VerticalTimingRegister.ACV);
 	int width = ((2 * m_HTiming0.HLW) - (m_HTiming0.HLW - m_HTiming1.HBS640)
 		- m_HTiming1.HBE640);
 	float pixelAR;

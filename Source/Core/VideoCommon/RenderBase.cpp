@@ -366,10 +366,10 @@ void Renderer::DrawDebugText()
 			ar_text = "Stretch";
 			break;
 		case ASPECT_ANALOG:
-			ar_text = "Analog TV";
+			ar_text = "Force 4:3";
 			break;
 		case ASPECT_ANALOG_WIDE:
-			ar_text = "Analog TV (Wide)";
+			ar_text = "Force 16:9";
 		}
 
 		const char* const efbcopy_text = g_ActiveConfig.bSkipEFBCopyToRam ? "to Texture" : "to RAM";

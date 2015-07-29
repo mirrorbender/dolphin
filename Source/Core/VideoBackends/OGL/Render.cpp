@@ -1655,7 +1655,7 @@ void Renderer::SwapImpl(u32 xfbAddr, u32 fbWidth, u32 fbStride, u32 fbHeight, co
 		s_last_efb_scale = g_ActiveConfig.iEFBScale;
 	}
 	bool TargetSizeChanged = false;
-	if(CalculateTargetSize(s_backbuffer_width, s_backbuffer_height))
+	if (CalculateTargetSize(s_backbuffer_width, s_backbuffer_height))
 	{
 		TargetSizeChanged = true;
 	}
